@@ -76,7 +76,11 @@ public class TwoWaySerialComm
                 	}
                 	else {
                 		datatemp = new String(buffer,0,len);
-                    	
+                    	// Format de données 
+                		//1. "COUPE" le mouvement de coupe a été détecté
+                		//2. "CHGMT:BATTE" ou "CHGMT:EPEE" quand il y a un changement d'arme
+                		//3. "EXPLOSE" quand la bombe a été choisi et que le clappement a été entendu
+                		//4. "TREX" quand le T-rex a été choisi et que il y a eu grognement
                 	}
                 }
             }
