@@ -12,20 +12,7 @@ import java.util.regex.Pattern;
 
 public class TwoWaySerialComm
 {
-	static Integer bas = 0;
-	static Integer med = 0;
-	static Integer haut = 0;
-	
-	public Integer getBas() {
-		return bas;
-	}
-	public Integer getMed() {
-		return med;
-	}
-	public Integer getHaut() {
-		return haut;
-	}
-	
+		
     public TwoWaySerialComm()
     {
         super();
@@ -89,23 +76,7 @@ public class TwoWaySerialComm
                 	}
                 	else {
                 		datatemp = new String(buffer,0,len);
-                    	datas=datas+datatemp;
-                        Pattern pattern; /* Pour la regex */
-                        /* Test savoir si on a tout */
-                        //On doit avoir valeur;valeur;valeurS
-                        pattern = Pattern.compile("([0-9]{3});([0-9]{3});([0-9]{3})S.*");
-                        Matcher m = pattern.matcher(datas);
-                       // System.out.println(datas);
-                        if(m.matches()){
-                            /* On a matché, on récupère les valeurs */
-                            datas = datas.substring(12);
-                            bas=Integer.parseInt(m.group(1));
-                            med=Integer.parseInt(m.group(2));
-                            haut=Integer.parseInt(m.group(3));
-                            System.out.println(bas+t+med+t+haut);
-                        }
                     	
-                        //System.out.print(new String(buffer,0,len)+t);	
                 	}
                 }
             }
