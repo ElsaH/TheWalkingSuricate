@@ -15,53 +15,68 @@ import javax.microedition.io.*;
 * message from an SPP client and sends a single line of response to the client.
 */
 public class SimpleSPPServer {
-    
-    //start server
-    private void startServer() throws IOException{
-  
-        //Create a UUID for SPP
-        UUID uuid = new UUID("1101", true);
-        //Create the servicve url
-        String connectionString = "btspp://localhost:" + uuid +";name=Sample SPP Server";
-        
-        //open server url
-        StreamConnectionNotifier streamConnNotifier = (StreamConnectionNotifier)Connector.open( connectionString );
-        
-        //Wait for client connection
-        System.out.println("\nServer Started. Waiting for clients to connect...");
-        StreamConnection connection=streamConnNotifier.acceptAndOpen();
-  
-        RemoteDevice dev = RemoteDevice.getRemoteDevice(connection);
-        System.out.println("Remote device address: "+dev.getBluetoothAddress());
-        System.out.println("Remote device name: "+dev.getFriendlyName(true));
-        
-        //read string from spp client
-        InputStream inStream=connection.openInputStream();
-        BufferedReader bReader=new BufferedReader(new InputStreamReader(inStream));
-        String lineRead=bReader.readLine();
-        System.out.println(lineRead);
-        
-        //send response to spp client
-        OutputStream outStream=connection.openOutputStream();
-        PrintWriter pWriter=new PrintWriter(new OutputStreamWriter(outStream));
-        pWriter.write("Response String from SPP Server\r\n");
-        pWriter.flush();
-  
-        pWriter.close();
-        streamConnNotifier.close();
-  
+	
+	private final UUID uuid = new UUID("1101", true);
+	private StreamConnectionNotifier streamConnNotifier;
+	public StreamConnection connection;
+	
+	SimpleSPPServer(){
+		try {
+			String connectionString = "btspp://localhost:" + uuid +";name=Sample SPP Server";
+			streamConnNotifier = (StreamConnectionNotifier) Connector.open(connectionString);
+			connection=streamConnNotifier.acceptAndOpen();
+		} catch (IOException e) {
+			System.out.println("Error : impossible de créer le serveur SPP.");
+		}
+	}
+	
+	private RemoteDevice getRemoteDevice() {
+		// dev.getBluetoothAddress()
+		// dev.getFriendlyName(true)
+		try {
+			return  RemoteDevice.getRemoteDevice(connection);
+		} catch (IOException e) {
+			return null;
+		}
+	}
+	
+	private String getMessage(RemoteDevice dev) {
+        try {
+        	InputStream inStream = connection.openInputStream();
+            BufferedReader bReader = new BufferedReader(new InputStreamReader(inStream));
+			return bReader.readLine();
+		} catch (IOException e) {
+			return null;
+		}
+	}
+	
+    private void stopServer(){
+        try {
+			streamConnNotifier.close();
+			connection = null;
+		} catch (IOException e) {
+			
+		}
     }
   
   
     public static void main(String[] args) throws IOException {
+        SimpleSPPServer server = new SimpleSPPServer();
+        RemoteDevice dev = null;
         
-        //display local device address and name
-        LocalDevice localDevice = LocalDevice.getLocalDevice();
-        System.out.println("Address: "+localDevice.getBluetoothAddress());
-        System.out.println("Name: "+localDevice.getFriendlyName());
+        // En attente de connexion de l'appareil
+        while(dev == null) {
+        	dev = server.getRemoteDevice();
+        }
         
-        SimpleSPPServer sampleSPPServer=new SimpleSPPServer();
-        sampleSPPServer.startServer();
+        System.out.println(dev.getFriendlyName(true));
         
+        // lecture des message
+        while(server.connection != null) {
+        	String message = server.getMessage(dev);
+        	if(message != null) {
+        		System.out.println(message);
+        	}
+        }
     }
 }
