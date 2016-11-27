@@ -18,13 +18,14 @@ public class SimpleSPPServer {
 	
 	private final UUID uuid = new UUID("1101", true);
 	private StreamConnectionNotifier streamConnNotifier;
+	public BufferedReader bReader;
 	public StreamConnection connection;
 	
 	SimpleSPPServer(){
 		try {
 			String connectionString = "btspp://localhost:" + uuid +";name=Sample SPP Server";
 			streamConnNotifier = (StreamConnectionNotifier) Connector.open(connectionString);
-			connection=streamConnNotifier.acceptAndOpen();
+			connection = streamConnNotifier.acceptAndOpen();
 		} catch (IOException e) {
 			System.out.println("Error : impossible de créer le serveur SPP.");
 		}
@@ -34,7 +35,10 @@ public class SimpleSPPServer {
 		// dev.getBluetoothAddress()
 		// dev.getFriendlyName(true)
 		try {
-			return  RemoteDevice.getRemoteDevice(connection);
+			RemoteDevice dev = RemoteDevice.getRemoteDevice(connection);
+			InputStream inStream = connection.openInputStream();
+			bReader = new BufferedReader(new InputStreamReader(inStream));
+			return dev;
 		} catch (IOException e) {
 			return null;
 		}
@@ -42,9 +46,7 @@ public class SimpleSPPServer {
 	
 	private String getMessage(RemoteDevice dev) {
         try {
-        	InputStream inStream = connection.openInputStream();
-            BufferedReader bReader = new BufferedReader(new InputStreamReader(inStream));
-			return bReader.readLine();
+        	return bReader.readLine();
 		} catch (IOException e) {
 			return null;
 		}
@@ -55,8 +57,12 @@ public class SimpleSPPServer {
 			streamConnNotifier.close();
 			connection = null;
 		} catch (IOException e) {
-			
+			connection = null;
 		}
+    }
+    
+    private boolean testConnection(){
+    	return true;
     }
   
   
@@ -64,7 +70,7 @@ public class SimpleSPPServer {
         SimpleSPPServer server = new SimpleSPPServer();
         RemoteDevice dev = null;
         
-        // En attente de connexion de l'appareil
+        // En attente de connexion d'un appareil
         while(dev == null) {
         	dev = server.getRemoteDevice();
         }
@@ -72,11 +78,11 @@ public class SimpleSPPServer {
         System.out.println(dev.getFriendlyName(true));
         
         // lecture des message
-        while(server.connection != null) {
+        while(server.testConnection()) {
         	String message = server.getMessage(dev);
-        	if(message != null) {
+        	if(message != null)
         		System.out.println(message);
-        	}
         }
+        
     }
 }
