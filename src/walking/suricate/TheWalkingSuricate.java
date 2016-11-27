@@ -1,13 +1,15 @@
+package walking.suricate;
+
 import processing.core.PApplet;
 
 public class TheWalkingSuricate extends PApplet {
 
 	
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		PApplet.main("TheWalkingSuricate");
-	}
-	
+//	public static void main(String[] args) {
+//		// TODO Auto-generated method stub
+//		PApplet.main("TheWalkingSuricate");
+//	}
+//	
 	public void settings() {
 		size(300,300);
 	}
