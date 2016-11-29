@@ -1,17 +1,11 @@
 package walking.suricate;
 
-//import processing.core.PApplet;
 import javafx.animation.ParallelTransition;
 import javafx.animation.RotateTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Application;
-/*import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.scene.control.Button;
-import javafx.scene.layout.StackPane;*/
 import javafx.stage.Stage;
 import javafx.util.Duration;
-//import javafx.builders.RectangleBuilder;
 import javafx.scene.*;
 import javafx.scene.control.Labeled;
 import javafx.scene.layout.BorderPane;
@@ -19,6 +13,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
+import javafx.scene.shape.Cylinder;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
@@ -26,50 +21,36 @@ import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 import javafx.geometry.Insets;
 import javafx.geometry.Point3D;
-
-//package walking.suricate;
-
 import java.io.File;
-import java.util.Scanner;
-
+import java.util.ArrayList;
+import java.util.List;
 import com.interactivemesh.jfx.importer.col.ColModelImporter;
-/*
-import javafx.animation.Animation;
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
-import javafx.animation.Timeline;
-import javafx.scene.transform.Rotate;
-import javafx.util.Duration;
-import javafx.scene.shape.Rectangle;*/
+
 
 public class TheWalkingSuricate extends Application {
 
-	
 	// Interface part
+	final Group global = new Group();
 	Labeled labelScore;
 	
-	
-	
+	static List<String> messages = new ArrayList<String>();
+	final static int nbMaxSuri = 100;
+	int compteurSuri = 0;
+	static Node[] Suricates = new Node[nbMaxSuri];
+	static int nbSuricates = 0;
+	int timeForSuricate = 10000;
+	int suricateSize = 100;
+	int suricateL = 10;
 	
 	final Group root = new Group();
-	final Group global = new Group();
+	
 	static Group epee = new Group();
 	static ParallelTransition swordTransition1;
-	static ParallelTransition swordTransition2;
+	
     final Xform world = new Xform();
     final Group testGroup = new Group();
- 
-    private static final double AXIS_LENGTH = 250.0;
-	final Xform axisGroup = new Xform();
-//	public static void main(String[] args) {
-//		// TODO Auto-generated method stub
-//		PApplet.main("TheWalkingSuricate");
-//	}
-//	
-	public void settings() {
-		//size(300,300);
-	}
-	
+    private Scene scene ;
+ 	
     final PerspectiveCamera camera = new PerspectiveCamera(true);
     final Xform cameraXform = new Xform();
     final Xform cameraXform2 = new Xform();
@@ -78,13 +59,14 @@ public class TheWalkingSuricate extends Application {
     private static final double CAMERA_INITIAL_X_ANGLE = 10.0;
     private static final double CAMERA_INITIAL_Y_ANGLE = 0;
     private static final double CAMERA_NEAR_CLIP = 0.1;
-    private static final double CAMERA_FAR_CLIP = 10000.0;
+    private static final double CAMERA_FAR_CLIP = 100000.0;
     private static final double CAMERA_INITIAL_Y = 70;
 
     private static final int LARGEUR_SCENE = 150;
+    private static final int RATIO_PROFONDEUR = 50;
     private static final int SCALE_EPEE = 30;
     
-    private Scene scene ;
+    
     @Override
     public void start(Stage primaryStage) {
 
@@ -92,7 +74,10 @@ public class TheWalkingSuricate extends Application {
     	buildCamera();
         //buildAxes();
         
-        test();
+        baseGame();
+        addSword();
+        initializeSuricates();
+        addSuricate();
     	
         
         BorderPane border = new BorderPane();
@@ -105,16 +90,13 @@ public class TheWalkingSuricate extends Application {
         global.getChildren().add(sub);
         border.setCenter(global);
         
+        
         scene = new Scene(border);
         
         primaryStage.setTitle("The Walking Suricate");
         primaryStage.setScene(scene);
-        
-        
-        
-        
+                
         primaryStage.show();
-        
         
     }
     private Group importFromFile(String fileName) {
@@ -132,57 +114,54 @@ public class TheWalkingSuricate extends Application {
         Group myG = new Group(nodes);
         return myG;
     }
-    
-    public HBox addHBox() {
-        HBox hbox = new HBox();
-        hbox.setPadding(new Insets(15, 12, 15, 12));
-        hbox.setSpacing(10);
-        hbox.setStyle("-fx-background-color: #336699;");
-        
-        Text score = new Text("Score : 0");
-        score.setFont(Font.font("Arial", FontWeight.BOLD, 20));
-        hbox.getChildren().add(score);
-        return hbox;
-    }
-    
-    
-    public void setScore(int score) {
+    public void initializeSuricates() {
     	
-    }
-    
-    private void test() {
-    	//Box b = new Box(50,50,50); 
-    	Box sol = new Box(LARGEUR_SCENE,1,LARGEUR_SCENE*5000);
-    	Box murGauche = new Box(1,LARGEUR_SCENE,LARGEUR_SCENE*5000);
-    	Box murDroit = new Box(1,LARGEUR_SCENE,LARGEUR_SCENE*5000);
-    	
-    	final PhongMaterial blueMaterial = new PhongMaterial();
-        blueMaterial.setDiffuseColor(Color.DARKBLUE);
-        blueMaterial.setSpecularColor(Color.BLUE);
-        final PhongMaterial greenMaterial = new PhongMaterial();
+    	int transX;
+    	final PhongMaterial greenMaterial = new PhongMaterial();
         greenMaterial.setDiffuseColor(Color.DARKGREEN);
         greenMaterial.setSpecularColor(Color.GREEN);
-        final PhongMaterial redMaterial = new PhongMaterial();
-        redMaterial.setDiffuseColor(Color.RED);
-        redMaterial.setSpecularColor(Color.RED);
-    	
-        //b.setMaterial(blueMaterial);  
-    	murDroit.setMaterial(redMaterial);
-    	murGauche.setMaterial(redMaterial);
-        sol.setMaterial(redMaterial);
-
-    	murDroit.setTranslateY(LARGEUR_SCENE/2);
-    	murDroit.setTranslateX(-LARGEUR_SCENE/2);
-    	murGauche.setTranslateY(LARGEUR_SCENE/2);
-    	murGauche.setTranslateX(LARGEUR_SCENE/2);
-    	
-        epee = importFromFile("src/epeesimple.dae");
+    	Cylinder Suricate ;
         
+        
+    	for(int i = 0 ; i < nbMaxSuri ; i++) {
+    		transX = (int) ((-LARGEUR_SCENE/2) + Math.random() * (LARGEUR_SCENE-suricateL));
+    		Suricate = new Cylinder(suricateL,suricateSize);
+            Suricate.setMaterial(greenMaterial);
+            Suricate.setTranslateY(suricateSize/2); //pour le remettre à la bonne hauteur 
+            Suricate.setTranslateX(transX);
+            Suricate.setTranslateZ(LARGEUR_SCENE * RATIO_PROFONDEUR / 2 - suricateL); //On le recule
+            
+    		Suricates[i] = Suricate;
+    		Suricates[i].setVisible(false);
+    		world.getChildren().add(Suricates[i]);
+    	}
+    }
+    
+    public void addSuricate() {
+    	Suricates[nbSuricates%nbMaxSuri].setVisible(true);;
+    	
+    	
+         
+        System.out.println("Nombre de suricates : " + nbSuricates);
+        //scene.getRoot().getChildrenUnmodifiable().add(Suricate);
+        
+        // Creating animation for suricate (only translation at the begining)
+        TranslateTransition t1 = new TranslateTransition(Duration.millis(timeForSuricate));
+        t1.setByZ(-LARGEUR_SCENE * RATIO_PROFONDEUR / 2 - suricateL);
+        t1.setCycleCount(1);
+        
+        ParallelTransition transi = new ParallelTransition(Suricates[nbSuricates%nbMaxSuri],t1);
+        transi.play();
+        
+        nbSuricates++;
+        
+    }
+    public void addSword() {
+    	epee = importFromFile("src/epeesimple.dae");
         epee.setScaleX(SCALE_EPEE/1.5);
         epee.setScaleY(-SCALE_EPEE);
         epee.setScaleZ(SCALE_EPEE);
-     
-        
+
         Translate transX = new Translate(-2,0,0);
         Translate transY = new Translate(0,-4,0);
         Translate transZ = new Translate(0,0,-3.5);
@@ -210,22 +189,101 @@ public class TheWalkingSuricate extends Application {
         
         
         System.out.println(epee.getTranslateX() + "," + epee.getTranslateY() + "," + epee.getTranslateZ());        
+        testGroup.getChildren().addAll(epee);
+    }
+    
+    public HBox addHBox() {
+        HBox hbox = new HBox();
+        hbox.setPadding(new Insets(15, 12, 15, 12));
+        hbox.setSpacing(10);
+        hbox.setStyle("-fx-background-color: #336699;");
+        
+        Text score = new Text("Score : 0");
+        score.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+        hbox.getChildren().add(score);
+        return hbox;
+    }
+    
+    
+    public void setScore(int score) {
+    	
+    }
+    
+    private void baseGame() {
+    	//Box b = new Box(50,50,50); 
+    	Box sol = new Box(LARGEUR_SCENE,1,LARGEUR_SCENE * RATIO_PROFONDEUR);
+    	Box murGauche = new Box(1,LARGEUR_SCENE,LARGEUR_SCENE * RATIO_PROFONDEUR);
+    	Box murDroit = new Box(1,LARGEUR_SCENE,LARGEUR_SCENE * RATIO_PROFONDEUR);
+    	
+    	final PhongMaterial blueMaterial = new PhongMaterial();
+        blueMaterial.setDiffuseColor(Color.DARKBLUE);
+        blueMaterial.setSpecularColor(Color.BLUE);
+        final PhongMaterial greenMaterial = new PhongMaterial();
+        greenMaterial.setDiffuseColor(Color.DARKGREEN);
+        greenMaterial.setSpecularColor(Color.GREEN);
+        final PhongMaterial redMaterial = new PhongMaterial();
+        redMaterial.setDiffuseColor(Color.RED);
+        redMaterial.setSpecularColor(Color.RED);
+    	
+        //b.setMaterial(blueMaterial);  
+    	murDroit.setMaterial(redMaterial);
+    	murGauche.setMaterial(redMaterial);
+        sol.setMaterial(redMaterial);
+
+    	murDroit.setTranslateY(LARGEUR_SCENE/2);
+    	murDroit.setTranslateX(-LARGEUR_SCENE/2);
+    	murGauche.setTranslateY(LARGEUR_SCENE/2);
+    	murGauche.setTranslateX(LARGEUR_SCENE/2);
+    	
         
         testGroup.getChildren().addAll(sol,murDroit,murGauche);
-        testGroup.getChildren().addAll(epee);
+        
         testGroup.setVisible(true);
         world.getChildren().addAll(testGroup);
     	
     }
     private void buildScene() {
-        System.out.println("buildScene");
         root.getChildren().add(world);
     }
     
     public void turnSword() {
     	swordTransition1.play();
+    	
+    	if(nbSuricates != 0){
+    		//System.out.println("Position du suricate le plus proche : " + Suricates[0].getTranslateZ());
+    		if(compteurSuri < nbSuricates) {
+	    		while(Suricates[compteurSuri%nbMaxSuri].getTranslateZ() < epee.getBoundsInParent().getHeight() ) {
+	    			System.out.println("Vous découpez un suricate");
+	    			
+	    			Suricates[compteurSuri%nbMaxSuri].setVisible(false);
+	    			
+	    			compteurSuri++;
+	    			addSuricate();
+	        	}
+    		}
+    	}
+    	
     }
     
+    public static ArrayList<Node> getAllNodes(Parent root) {
+        ArrayList<Node> nodes = new ArrayList<Node>();
+        addAllDescendents(root, nodes);
+        return nodes;
+    }
+
+    private static void addAllDescendents(Parent parent, ArrayList<Node> nodes) {
+        for (Node node : parent.getChildrenUnmodifiable()) {
+            nodes.add(node);
+            if (node instanceof Parent)
+                addAllDescendents((Parent)node, nodes);
+        }
+    }
+    
+    
+    
+    /*
+     * private static final double AXIS_LENGTH = 250.0;
+     * 	final Xform axisGroup = new Xform();
     private void buildAxes() {
         final PhongMaterial redMaterial = new PhongMaterial();
         redMaterial.setDiffuseColor(Color.DARKRED);
@@ -251,7 +309,7 @@ public class TheWalkingSuricate extends Application {
         axisGroup.setVisible(true);
         world.getChildren().addAll(axisGroup);
     
-    }
+    }*/
     private void buildCamera() {
         root.getChildren().add(cameraXform);
         cameraXform.getChildren().add(cameraXform2);
@@ -271,14 +329,6 @@ public class TheWalkingSuricate extends Application {
     
     public static void main(String[] args) {
         launch(args);
-        System.out.println("Bonjour entrer si vous voulez faire tourner l'épée ... ");
-        Scanner in = new Scanner(System.in);
-        int k = in.nextInt();
-        if(k == 0)
-        	swordTransition1.play();
-        
-        in.close();
-        
     }
 	
 

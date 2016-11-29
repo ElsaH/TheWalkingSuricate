@@ -14,6 +14,8 @@ public class Launcher {
 	SimpleSPPServer server;
 	GameData data = new GameData();
 	List<String> messages;
+	Thread Tscene;
+	Thread Tserver;
 	
 	public Launcher() {
 		scene = new TheWalkingSuricate();
@@ -22,17 +24,18 @@ public class Launcher {
 	}
 	
 	public void startScene() {
-		new Thread() {
+		Tscene = new Thread() {
             @Override
             public void run() {
             	javafx.application.Application.launch(TheWalkingSuricate.class);
             }
-        }.start();
+        };
+        Tscene.start();
 	}
 	
 	
 	public void startServer() {
-		new Thread() {
+		Tserver = new Thread() {
 			@Override
 			public void run() {
 				RemoteDevice dev = null;
@@ -53,18 +56,20 @@ public class Launcher {
 		        while(server.testConnection()) {
 		        	String message = server.getMessage(dev);
 		        	if(message != null){
-		        		//System.out.println("Message numero : " + messages.size() + " " + message);
 						messages.add(messages.size(),message);
 		        	}
 		        }
+		        server.stopServer();
 			}
-		}.start();
+		};
+		Tserver.start();
 	}
 	public void moveSword() {
 		scene.turnSword();
 	}
 	
 	
+	@SuppressWarnings("deprecation")
 	public static void main(String[] args) {
 		Launcher game = new Launcher();
 		game.startScene();
@@ -79,7 +84,11 @@ public class Launcher {
 					game.moveSword();
 			}
 		}
-                
+		
+		
+		game.Tserver.stop();
+		game.Tscene.stop();
+		
 	}
 
 }
