@@ -1,13 +1,24 @@
 package walking.suricate;
 
-import java.util.Scanner;
+import java.io.IOException;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.bluetooth.RemoteDevice;
+
 
 public class Launcher {
 	
-	TheWalkingSuricate scene ;
+	TheWalkingSuricate scene ; //will be in thread.
+	SimpleSPPServer server;
+	GameData data = new GameData();
+	List<String> messages;
 	
-	public void Launcher() {
+	public Launcher() {
 		scene = new TheWalkingSuricate();
+		server = new SimpleSPPServer();
+		messages = new ArrayList<String>();
 	}
 	
 	public void startScene() {
@@ -18,6 +29,36 @@ public class Launcher {
             }
         }.start();
 	}
+	
+	
+	public void startServer() {
+		new Thread() {
+			@Override
+			public void run() {
+				RemoteDevice dev = null;
+		        
+		        // En attente de connexion d'un appareil
+		        while(dev == null) {
+		        	dev = server.getRemoteDevice();
+		        }
+		        
+		        try {
+					System.out.println(dev.getFriendlyName(true));
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		        
+		        // lecture des message
+		        while(server.testConnection()) {
+		        	String message = server.getMessage(dev);
+		        	if(message != null){
+						messages.add(message);
+		        	}
+		        }
+			}
+		}.start();
+	}
 	public void moveSword() {
 		scene.turnSword();
 	}
@@ -26,12 +67,18 @@ public class Launcher {
 	public static void main(String[] args) {
 		Launcher game = new Launcher();
 		game.startScene();
-		System.out.println("Bonjour entrer si vous voulez faire tourner l'épée ... ");
-        Scanner in = new Scanner(System.in);
-        int k = in.nextInt();
-        if(k == 0)
-        	game.moveSword();;
-        
+		game.startServer();
+		String line;
+		while(game.server.testConnection()) {
+			if(game.messages.size() != 0) {
+				line = game.messages.get(0);
+				game.messages.remove(0);
+				System.out.println(line);
+				if(line.equals("COUPE")) 
+					game.moveSword();
+			}
+		}
+                
 	}
 
 }

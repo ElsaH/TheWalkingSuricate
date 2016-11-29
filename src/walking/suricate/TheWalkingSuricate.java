@@ -45,6 +45,7 @@ public class TheWalkingSuricate extends Application {
 	static ParallelTransition transition;
     final Xform world = new Xform();
     final Group testGroup = new Group();
+    boolean isRunning = false;
  
     private static final double AXIS_LENGTH = 250.0;
 	final Xform axisGroup = new Xform();
@@ -174,9 +175,16 @@ public class TheWalkingSuricate extends Application {
         root.getChildren().add(world);
     }
     
-    public static void turnSword() {
-    	 
-        transition.play();
+    public void turnSword() {
+    	if(!isRunning) {
+    		isRunning = true;
+    		transition.play();
+    	}
+    	else {
+    		isRunning = false;
+    		transition.stop();
+    	}
+        
     }
     
     private void buildAxes() {

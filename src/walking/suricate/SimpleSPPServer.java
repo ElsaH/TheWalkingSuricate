@@ -6,7 +6,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-  
+import java.io.RandomAccessFile;
+
 import javax.bluetooth.*;
 import javax.microedition.io.*;
   
@@ -31,7 +32,7 @@ public class SimpleSPPServer {
 		}
 	}
 	
-	private RemoteDevice getRemoteDevice() {
+	public RemoteDevice getRemoteDevice() {
 		// dev.getBluetoothAddress()
 		// dev.getFriendlyName(true)
 		try {
@@ -44,7 +45,7 @@ public class SimpleSPPServer {
 		}
 	}
 	
-	private String getMessage(RemoteDevice dev) {
+	public String getMessage(RemoteDevice dev) {
         try {
         	return bReader.readLine();
 		} catch (IOException e) {
@@ -52,7 +53,7 @@ public class SimpleSPPServer {
 		}
 	}
 	
-    private void stopServer(){
+    public void stopServer(){
         try {
 			streamConnNotifier.close();
 			connection = null;
@@ -61,7 +62,7 @@ public class SimpleSPPServer {
 		}
     }
     
-    private boolean testConnection(){
+    public boolean testConnection(){
     	return true;
     }
   
