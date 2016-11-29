@@ -53,7 +53,8 @@ public class Launcher {
 		        while(server.testConnection()) {
 		        	String message = server.getMessage(dev);
 		        	if(message != null){
-						messages.add(message);
+		        		//System.out.println("Message numero : " + messages.size() + " " + message);
+						messages.add(messages.size(),message);
 		        	}
 		        }
 			}
@@ -73,8 +74,8 @@ public class Launcher {
 			if(game.messages.size() != 0) {
 				line = game.messages.get(0);
 				game.messages.remove(0);
-				System.out.println(line);
-				if(line.equals("COUPE")) 
+				//System.out.println(line);
+				if(line != null && line.equals("COUPE")) 
 					game.moveSword();
 			}
 		}

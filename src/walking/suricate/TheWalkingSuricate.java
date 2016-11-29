@@ -3,7 +3,6 @@ package walking.suricate;
 //import processing.core.PApplet;
 import javafx.animation.ParallelTransition;
 import javafx.animation.RotateTransition;
-import javafx.animation.Timeline;
 import javafx.animation.TranslateTransition;
 import javafx.application.Application;
 /*import javafx.event.ActionEvent;
@@ -14,16 +13,21 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 //import javafx.builders.RectangleBuilder;
 import javafx.scene.*;
+import javafx.scene.control.Labeled;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
+import javafx.geometry.Insets;
 import javafx.geometry.Point3D;
 
 //package walking.suricate;
-
-import processing.core.PApplet;
 
 import java.io.File;
 import java.util.Scanner;
@@ -40,12 +44,20 @@ import javafx.scene.shape.Rectangle;*/
 
 public class TheWalkingSuricate extends Application {
 
+	
+	// Interface part
+	Labeled labelScore;
+	
+	
+	
+	
 	final Group root = new Group();
+	final Group global = new Group();
 	static Group epee = new Group();
-	static ParallelTransition transition;
+	static ParallelTransition swordTransition1;
+	static ParallelTransition swordTransition2;
     final Xform world = new Xform();
     final Group testGroup = new Group();
-    boolean isRunning = false;
  
     private static final double AXIS_LENGTH = 250.0;
 	final Xform axisGroup = new Xform();
@@ -72,6 +84,7 @@ public class TheWalkingSuricate extends Application {
     private static final int LARGEUR_SCENE = 150;
     private static final int SCALE_EPEE = 30;
     
+    private Scene scene ;
     @Override
     public void start(Stage primaryStage) {
 
@@ -81,12 +94,22 @@ public class TheWalkingSuricate extends Application {
         
         test();
     	
-        Scene scene = new Scene(root, 800, 600, true);
-        scene.setFill(Color.GREY);
-        scene.setCamera(camera);
-
+        
+        BorderPane border = new BorderPane();
+    	HBox hbox = addHBox();
+    	border.setTop(hbox);
+        
+        SubScene sub = new SubScene(root, 800, 600, true,SceneAntialiasing.BALANCED);
+        sub.setCamera(camera);
+        
+        global.getChildren().add(sub);
+        border.setCenter(global);
+        
+        scene = new Scene(border);
+        
         primaryStage.setTitle("The Walking Suricate");
         primaryStage.setScene(scene);
+        
         
         
         
@@ -108,6 +131,23 @@ public class TheWalkingSuricate extends Application {
         
         Group myG = new Group(nodes);
         return myG;
+    }
+    
+    public HBox addHBox() {
+        HBox hbox = new HBox();
+        hbox.setPadding(new Insets(15, 12, 15, 12));
+        hbox.setSpacing(10);
+        hbox.setStyle("-fx-background-color: #336699;");
+        
+        Text score = new Text("Score : 0");
+        score.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+        hbox.getChildren().add(score);
+        return hbox;
+    }
+    
+    
+    public void setScore(int score) {
+    	
     }
     
     private void test() {
@@ -138,7 +178,7 @@ public class TheWalkingSuricate extends Application {
     	
         epee = importFromFile("src/epeesimple.dae");
         
-        epee.setScaleX(SCALE_EPEE);
+        epee.setScaleX(SCALE_EPEE/1.5);
         epee.setScaleY(-SCALE_EPEE);
         epee.setScaleZ(SCALE_EPEE);
      
@@ -150,15 +190,22 @@ public class TheWalkingSuricate extends Application {
         Rotate rotateZ = new Rotate(45,Rotate.Z_AXIS);
         epee.getTransforms().addAll(rotateY,transZ,transX,transY,rotateZ);         
         
+        int duration = 100;
         Point3D pts = new Point3D(0,1,0);
-        RotateTransition rotate = new RotateTransition(Duration.millis(200)); 
+        RotateTransition rotate = new RotateTransition(Duration.millis(duration)); 
         epee.setRotationAxis(pts);
-        rotate.setFromAngle(-20);
-        rotate.setToAngle(20);
-        rotate.setCycleCount(Timeline.INDEFINITE);
+        rotate.setFromAngle(-40);
+        rotate.setToAngle(70);
+        rotate.setCycleCount(2);
         rotate.setAutoReverse(true);
         
-        transition = new ParallelTransition(epee,rotate);
+        TranslateTransition translate1 = new TranslateTransition(Duration.millis(duration));
+        translate1.setByY(-35);
+        translate1.setFromY(12);
+        translate1.setAutoReverse(true);
+        translate1.setCycleCount(2);
+        
+        swordTransition1 = new ParallelTransition(epee,rotate,translate1);
         
         
         
@@ -176,15 +223,7 @@ public class TheWalkingSuricate extends Application {
     }
     
     public void turnSword() {
-    	if(!isRunning) {
-    		isRunning = true;
-    		transition.play();
-    	}
-    	else {
-    		isRunning = false;
-    		transition.stop();
-    	}
-        
+    	swordTransition1.play();
     }
     
     private void buildAxes() {
@@ -236,7 +275,9 @@ public class TheWalkingSuricate extends Application {
         Scanner in = new Scanner(System.in);
         int k = in.nextInt();
         if(k == 0)
-        	transition.play();
+        	swordTransition1.play();
+        
+        in.close();
         
     }
 	
