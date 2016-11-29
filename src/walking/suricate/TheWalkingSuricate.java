@@ -1,4 +1,5 @@
-<<<<<<< HEAD:src/TheWalkingSuricate.java
+package walking.suricate;
+
 //import processing.core.PApplet;
 import javafx.animation.ParallelTransition;
 import javafx.animation.RotateTransition;
@@ -19,13 +20,13 @@ import javafx.scene.shape.Box;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 import javafx.geometry.Point3D;
-=======
-package walking.suricate;
+
+//package walking.suricate;
 
 import processing.core.PApplet;
->>>>>>> origin/master:src/walking/suricate/TheWalkingSuricate.java
 
 import java.io.File;
+import java.util.Scanner;
 
 import com.interactivemesh.jfx.importer.col.ColModelImporter;
 /*
@@ -39,24 +40,22 @@ import javafx.scene.shape.Rectangle;*/
 
 public class TheWalkingSuricate extends Application {
 
-	
-<<<<<<< HEAD:src/TheWalkingSuricate.java
 	final Group root = new Group();
+	static Group epee = new Group();
+	static ParallelTransition transition;
     final Xform world = new Xform();
     final Group testGroup = new Group();
  
     private static final double AXIS_LENGTH = 250.0;
 	final Xform axisGroup = new Xform();
-=======
 //	public static void main(String[] args) {
 //		// TODO Auto-generated method stub
 //		PApplet.main("TheWalkingSuricate");
 //	}
 //	
 	public void settings() {
-		size(300,300);
+		//size(300,300);
 	}
->>>>>>> origin/master:src/walking/suricate/TheWalkingSuricate.java
 	
     final PerspectiveCamera camera = new PerspectiveCamera(true);
     final Xform cameraXform = new Xform();
@@ -136,7 +135,7 @@ public class TheWalkingSuricate extends Application {
     	murGauche.setTranslateY(LARGEUR_SCENE/2);
     	murGauche.setTranslateX(LARGEUR_SCENE/2);
     	
-        Group epee = importFromFile("src/epeesimple.dae");
+        epee = importFromFile("src/epeesimple.dae");
         
         epee.setScaleX(SCALE_EPEE);
         epee.setScaleY(-SCALE_EPEE);
@@ -148,7 +147,7 @@ public class TheWalkingSuricate extends Application {
         Translate transZ = new Translate(0,0,-3.5);
         Rotate rotateY = new Rotate(-90, Rotate.Y_AXIS);
         Rotate rotateZ = new Rotate(45,Rotate.Z_AXIS);
-        epee.getTransforms().addAll(rotateY,transZ,transX,transY,rotateZ);  
+        epee.getTransforms().addAll(rotateY,transZ,transX,transY,rotateZ);         
         
         Point3D pts = new Point3D(0,1,0);
         RotateTransition rotate = new RotateTransition(Duration.millis(200)); 
@@ -158,8 +157,7 @@ public class TheWalkingSuricate extends Application {
         rotate.setCycleCount(Timeline.INDEFINITE);
         rotate.setAutoReverse(true);
         
-        ParallelTransition transition = new ParallelTransition(epee,rotate); 
-        transition.play();
+        transition = new ParallelTransition(epee,rotate);
         
         
         
@@ -174,6 +172,11 @@ public class TheWalkingSuricate extends Application {
     private void buildScene() {
         System.out.println("buildScene");
         root.getChildren().add(world);
+    }
+    
+    public static void turnSword() {
+    	 
+        transition.play();
     }
     
     private void buildAxes() {
@@ -221,6 +224,12 @@ public class TheWalkingSuricate extends Application {
     
     public static void main(String[] args) {
         launch(args);
+        System.out.println("Bonjour entrer si vous voulez faire tourner l'épée ... ");
+        Scanner in = new Scanner(System.in);
+        int k = in.nextInt();
+        if(k == 0)
+        	transition.play();
+        
     }
 	
 

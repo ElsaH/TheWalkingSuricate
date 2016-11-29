@@ -1,23 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-<<<<<<< HEAD
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="core.jar"/>
-	<classpathentry kind="lib" path="D:/Documents/GitHub/TheWalkingSuricate/JFX3DModelImporters_EA_2014-02-09/jim3dsModelImporterJFX.jar"/>
-	<classpathentry kind="lib" path="D:/Documents/GitHub/TheWalkingSuricate/JFX3DModelImporters_EA_2014-02-09/jimColModelImporterJFX.jar"/>
-	<classpathentry kind="lib" path="D:/Documents/GitHub/TheWalkingSuricate/JFX3DModelImporters_EA_2014-02-09/jimFxmlModelImporterJFX.jar"/>
-	<classpathentry kind="lib" path="D:/Documents/GitHub/TheWalkingSuricate/JFX3DModelImporters_EA_2014-02-09/jimObjModelImporterJFX.jar"/>
-	<classpathentry kind="lib" path="D:/Documents/GitHub/TheWalkingSuricate/JFX3DModelImporters_EA_2014-02-09/jimStlMeshImporterJFX.jar"/>
-	<classpathentry kind="lib" path="D:/Documents/GitHub/TheWalkingSuricate/JFX3DModelImporters_EA_2014-02-09/jimX3dModelImporterJFX.jar"/>
-=======
-	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry exported="true" kind="lib" path="core.jar"/>
-	<classpathentry exported="true" kind="lib" path="rxtx-2.1.7.jar"/>
 	<classpathentry kind="lib" path="bluecove-2.1.1-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="bluecove-bluez-2.1.1-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="bluecove-emu-2.1.1-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="bluecove-gpl-2.1.1-SNAPSHOT.jar"/>
->>>>>>> origin/master
+	<classpathentry kind="lib" path="core.jar"/>
+	<classpathentry kind="lib" path="gluegen-rt-natives-linux-amd64.jar"/>
+	<classpathentry kind="lib" path="gluegen-rt-natives-linux-armv6hf.jar"/>
+	<classpathentry kind="lib" path="gluegen-rt-natives-linux-i586.jar"/>
+	<classpathentry kind="lib" path="gluegen-rt-natives-macosx-universal.jar"/>
+	<classpathentry kind="lib" path="gluegen-rt-natives-windows-amd64.jar"/>
+	<classpathentry kind="lib" path="gluegen-rt-natives-windows-i586.jar"/>
+	<classpathentry kind="lib" path="gluegen-rt.jar"/>
+	<classpathentry kind="lib" path="JFX3DModelImporters_EA_2014-02-09/jim3dsModelImporterJFX.jar"/>
+	<classpathentry kind="lib" path="JFX3DModelImporters_EA_2014-02-09/jimColModelImporterJFX.jar"/>
+	<classpathentry kind="lib" path="JFX3DModelImporters_EA_2014-02-09/jimFxmlModelImporterJFX.jar"/>
+	<classpathentry kind="lib" path="JFX3DModelImporters_EA_2014-02-09/jimObjModelImporterJFX.jar"/>
+	<classpathentry kind="lib" path="JFX3DModelImporters_EA_2014-02-09/jimStlMeshImporterJFX.jar"/>
+	<classpathentry kind="lib" path="JFX3DModelImporters_EA_2014-02-09/jimX3dModelImporterJFX.jar"/>
+	<classpathentry kind="lib" path="jogl-all-natives-linux-amd64.jar"/>
+	<classpathentry kind="lib" path="jogl-all-natives-linux-armv6hf.jar"/>
+	<classpathentry kind="lib" path="jogl-all-natives-linux-i586.jar"/>
+	<classpathentry kind="lib" path="jogl-all-natives-macosx-universal.jar"/>
+	<classpathentry kind="lib" path="jogl-all-natives-windows-amd64.jar"/>
+	<classpathentry kind="lib" path="jogl-all-natives-windows-i586.jar"/>
+	<classpathentry kind="lib" path="jogl-all.jar"/>
+	<classpathentry kind="lib" path="rxtx-2.1.7.jar"/>
+	<classpathentry kind="lib" path="RXTXcomm.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
