@@ -4,6 +4,7 @@ import javafx.animation.ParallelTransition;
 import javafx.animation.RotateTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Application;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.scene.*;
@@ -32,8 +33,10 @@ public class TheWalkingSuricate extends Application {
 	// Interface part
 	final Group global = new Group();
 	Labeled labelScore;
+	final Text score = new Text();
+	final SimpleStringProperty theScore = new SimpleStringProperty("Score : 0");
 	
-	static List<String> messages = new ArrayList<String>();
+	List<String> messages = new ArrayList<String>();
 	final static int nbMaxSuri = 100;
 	int compteurSuri = 0;
 	static Node[] Suricates = new Node[nbMaxSuri];
@@ -198,15 +201,17 @@ public class TheWalkingSuricate extends Application {
         hbox.setSpacing(10);
         hbox.setStyle("-fx-background-color: #336699;");
         
-        Text score = new Text("Score : 0");
+        setScore(0);
+        score.textProperty().bind(theScore);
         score.setFont(Font.font("Arial", FontWeight.BOLD, 20));
         hbox.getChildren().add(score);
         return hbox;
     }
     
     
-    public void setScore(int score) {
-    	
+    public void setScore(int _score) {
+    	System.out.println("Setting score : " + _score);
+    	theScore.setValue("Score : "+ _score);
     }
     
     private void baseGame() {
@@ -258,7 +263,7 @@ public class TheWalkingSuricate extends Application {
 	    			Suricates[compteurSuri%nbMaxSuri].setVisible(false);
 	    			
 	    			compteurSuri++;
-	    			addSuricate();
+	    			messages.add("TUE");
 	        	}
     		}
     	}

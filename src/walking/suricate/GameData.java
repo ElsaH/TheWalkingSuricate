@@ -14,6 +14,9 @@ public class GameData {
 	int level = 1;
 	String name = "unknown";
 	int score = 0;
+	double facteurLVL = 0.1;
+	int pointSuri = 100;
+	
 	private static String scoreFileName = "score.txt";
 	
 	public GameData() {
@@ -22,6 +25,10 @@ public class GameData {
 	public void setName(String userName) {
 		name = userName;
 		name.replace(' ', '_');
+	}
+	public void tue() {
+		double pts = pointSuri * facteurLVL * Math.exp(level);
+		score = score + (int)pts;
 	}
 	public void saveScoreToFile() {
 		List<String> scores = readScoreFromFile();

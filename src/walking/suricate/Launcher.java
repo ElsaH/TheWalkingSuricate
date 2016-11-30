@@ -83,6 +83,16 @@ public class Launcher {
 				if(line != null && line.equals("COUPE")) 
 					game.moveSword();
 			}
+			//Les messages qu'envoie la scene
+			if(game.scene.messages.size() != 0) {
+				line = game.scene.messages.get(0);
+				game.scene.messages.remove(0);
+				if(line.equals("TUE")) {
+					game.data.tue();
+					game.scene.setScore(game.data.score);
+					game.scene.addSuricate();
+				}
+			}
 		}
 		
 		
