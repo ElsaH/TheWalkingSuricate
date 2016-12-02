@@ -8,18 +8,46 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class GameData {
 	
 	int level = 1;
 	String name = "unknown";
 	int score = 0;
+	private final int nbSuriMini = 1;
+	private int nbSuricateMort = 0;
 	double facteurLVL = 0.1;
 	int pointSuri = 100;
+	private int defaultTimeSuricateAnimation = 5000;
+	private int defaultTimeRespawnSuricate = 5000;
+	public List<String> messages = new ArrayList<String>();
+	private Timer exec = new Timer();
+
 	
 	private static String scoreFileName = "score.txt";
 	
 	public GameData() {
+		
+	}
+	public int getSuricateSpeed() {
+		return defaultTimeSuricateAnimation;
+	}
+	public void start() {
+		
+		
+		TimerTask execTask = new TimerTask() {
+		  @Override
+		  public void run() {
+		    messages.add("SURICATE");
+		  }
+		};
+		exec.scheduleAtFixedRate(execTask, 0,defaultTimeSuricateAnimation);
+		
 		
 	}
 	public void setName(String userName) {
@@ -29,6 +57,34 @@ public class GameData {
 	public void tue() {
 		double pts = pointSuri * facteurLVL * Math.exp(level);
 		score = score + (int)pts;
+		nbSuricateMort++;
+		if(nbSuricateMort >= level * nbSuriMini) {
+			nbSuricateMort = nbSuricateMort - level * nbSuriMini;
+			level++;
+			defaultTimeSuricateAnimation-=(100*level);
+			
+			if(defaultTimeSuricateAnimation < 1000) 
+				defaultTimeSuricateAnimation = 1000;
+			
+			defaultTimeRespawnSuricate /= 2;
+			
+			
+			exec.cancel();
+			
+			exec = new Timer();
+			
+			TimerTask execTask = new TimerTask() {
+			  @Override
+			  public void run() {
+			    messages.add("SURICATE");
+			  }
+			};
+			exec.scheduleAtFixedRate(execTask, 0,defaultTimeSuricateAnimation);
+			
+			
+			
+			messages.add("LEVEL_UP");
+		}
 	}
 	public void saveScoreToFile() {
 		List<String> scores = readScoreFromFile();

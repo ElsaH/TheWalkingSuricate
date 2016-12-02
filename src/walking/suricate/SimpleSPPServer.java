@@ -3,6 +3,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+
 import javax.bluetooth.*;
 import javax.microedition.io.*;
   
@@ -16,6 +17,10 @@ public class SimpleSPPServer {
 	private StreamConnectionNotifier streamConnNotifier;
 	public BufferedReader bReader;
 	public StreamConnection connection;
+	
+	boolean isConnected = true;
+	
+	
 	
 	SimpleSPPServer(){
 		try {
@@ -58,7 +63,14 @@ public class SimpleSPPServer {
     }
     
     public boolean testConnection(){
-    	return true;
+    	return isConnected;
+    }
+    
+    public void disconnect() {
+    	isConnected = false;
+    }
+    public void connect() {
+    	isConnected = true;
     }
   
   

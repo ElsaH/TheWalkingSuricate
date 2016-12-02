@@ -4,11 +4,10 @@ import javafx.animation.ParallelTransition;
 import javafx.animation.RotateTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Application;
-import javafx.beans.property.SimpleStringProperty;
+import javafx.application.Platform;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.scene.*;
-import javafx.scene.control.Labeled;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
@@ -27,21 +26,20 @@ import java.util.ArrayList;
 import java.util.List;
 import com.interactivemesh.jfx.importer.col.ColModelImporter;
 
-
-public class TheWalkingSuricate extends Application {
+public class TheWalkingSuricate extends Application implements Runnable {
 
 	// Interface part
 	final Group global = new Group();
-	Labeled labelScore;
-	final Text score = new Text();
-	final SimpleStringProperty theScore = new SimpleStringProperty("Score : 0");
+	private Text score = new Text();
+	static Text score2;
+	private HBox hb;
 	
 	List<String> messages = new ArrayList<String>();
 	final static int nbMaxSuri = 100;
 	int compteurSuri = 0;
 	static Node[] Suricates = new Node[nbMaxSuri];
 	static int nbSuricates = 0;
-	int timeForSuricate = 10000;
+	int timeForSuricate = 5000;
 	int suricateSize = 100;
 	int suricateL = 10;
 	
@@ -53,6 +51,7 @@ public class TheWalkingSuricate extends Application {
     final Xform world = new Xform();
     final Group testGroup = new Group();
     private Scene scene ;
+    private BorderPane border;
  	
     final PerspectiveCamera camera = new PerspectiveCamera(true);
     final Xform cameraXform = new Xform();
@@ -80,12 +79,15 @@ public class TheWalkingSuricate extends Application {
         baseGame();
         addSword();
         initializeSuricates();
-        addSuricate();
-    	
+        //addSuricate();
+        /*System.out.println("SCENE : Adding message READY");
+        messages.add(messages.size(),"READY");*/
         
-        BorderPane border = new BorderPane();
-    	HBox hbox = addHBox();
-    	border.setTop(hbox);
+
+        
+        border = new BorderPane();
+    	hb = addHBox();
+    	border.setTop(hb);
         
         SubScene sub = new SubScene(root, 800, 600, true,SceneAntialiasing.BALANCED);
         sub.setCamera(camera);
@@ -101,6 +103,7 @@ public class TheWalkingSuricate extends Application {
                 
         primaryStage.show();
         
+        
     }
     private Group importFromFile(String fileName) {
     	File file = new File(fileName);
@@ -108,12 +111,6 @@ public class TheWalkingSuricate extends Application {
         importer.read(file);
         Node[] nodes = importer.getImport();
     	
-        System.out.println("There is " + nodes.length + " nodes imported from file " + fileName);
-        System.out.println(nodes[0].toString());
-        System.out.println(nodes[0].getBoundsInParent().getHeight());
-        System.out.println(nodes[0].getBoundsInParent().getWidth());
-        System.out.println(nodes[0].getBoundsInParent().getDepth());
-        
         Group myG = new Group(nodes);
         return myG;
     }
@@ -141,15 +138,14 @@ public class TheWalkingSuricate extends Application {
     }
     
     public void addSuricate() {
+    	addSuricate(timeForSuricate);
+    }
+    
+    public void addSuricate(int animationTime) {
     	Suricates[nbSuricates%nbMaxSuri].setVisible(true);;
+    	Suricates[nbSuricates%nbMaxSuri].setTranslateZ(LARGEUR_SCENE * RATIO_PROFONDEUR / 2 - suricateL); //On le recule
     	
-    	
-         
-        System.out.println("Nombre de suricates : " + nbSuricates);
-        //scene.getRoot().getChildrenUnmodifiable().add(Suricate);
-        
-        // Creating animation for suricate (only translation at the begining)
-        TranslateTransition t1 = new TranslateTransition(Duration.millis(timeForSuricate));
+        TranslateTransition t1 = new TranslateTransition(Duration.millis(animationTime));
         t1.setByZ(-LARGEUR_SCENE * RATIO_PROFONDEUR / 2 - suricateL);
         t1.setCycleCount(1);
         
@@ -201,17 +197,19 @@ public class TheWalkingSuricate extends Application {
         hbox.setSpacing(10);
         hbox.setStyle("-fx-background-color: #336699;");
         
-        setScore(0);
-        score.textProperty().bind(theScore);
+        score = new Text("Score : 0 .......................................");
         score.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+        score2 = score;
         hbox.getChildren().add(score);
+        setScore(0);
+        
         return hbox;
     }
     
     
     public void setScore(int _score) {
-    	System.out.println("Setting score : " + _score);
-    	theScore.setValue("Score : "+ _score);
+    	//System.out.println("Setting score : " + _score);
+    	score2.setText("Score : " + _score);
     }
     
     private void baseGame() {
@@ -253,6 +251,7 @@ public class TheWalkingSuricate extends Application {
     
     public void turnSword() {
     	swordTransition1.play();
+    	//System.out.println(score.getText());
     	
     	if(nbSuricates != 0){
     		//System.out.println("Position du suricate le plus proche : " + Suricates[0].getTranslateZ());
@@ -264,6 +263,7 @@ public class TheWalkingSuricate extends Application {
 	    			
 	    			compteurSuri++;
 	    			messages.add("TUE");
+	    			//addSuricate();
 	        	}
     		}
     	}
@@ -284,37 +284,6 @@ public class TheWalkingSuricate extends Application {
         }
     }
     
-    
-    
-    /*
-     * private static final double AXIS_LENGTH = 250.0;
-     * 	final Xform axisGroup = new Xform();
-    private void buildAxes() {
-        final PhongMaterial redMaterial = new PhongMaterial();
-        redMaterial.setDiffuseColor(Color.DARKRED);
-        redMaterial.setSpecularColor(Color.RED);
- 
-        final PhongMaterial greenMaterial = new PhongMaterial();
-        greenMaterial.setDiffuseColor(Color.DARKGREEN);
-        greenMaterial.setSpecularColor(Color.GREEN);
- 
-        final PhongMaterial blueMaterial = new PhongMaterial();
-        blueMaterial.setDiffuseColor(Color.DARKBLUE);
-        blueMaterial.setSpecularColor(Color.BLUE);
- 
-        final Box xAxis = new Box(AXIS_LENGTH, 1, 1);
-        final Box yAxis = new Box(1, AXIS_LENGTH, 1);
-        final Box zAxis = new Box(1, 1, AXIS_LENGTH);
-        
-        xAxis.setMaterial(redMaterial);
-        yAxis.setMaterial(greenMaterial);
-        zAxis.setMaterial(blueMaterial);
- 
-        axisGroup.getChildren().addAll(xAxis, yAxis, zAxis);
-        axisGroup.setVisible(true);
-        world.getChildren().addAll(axisGroup);
-    
-    }*/
     private void buildCamera() {
         root.getChildren().add(cameraXform);
         cameraXform.getChildren().add(cameraXform2);
@@ -328,13 +297,23 @@ public class TheWalkingSuricate extends Application {
         cameraXform.ry.setAngle(CAMERA_INITIAL_Y_ANGLE);
         cameraXform.rx.setAngle(CAMERA_INITIAL_X_ANGLE);
         cameraXform.t.setY(CAMERA_INITIAL_Y);
-        
     }
     
     
     public static void main(String[] args) {
         launch(args);
     }
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		launch();
+	}
+	public void exit() {
+		// TODO Auto-generated method stub
+		Platform.exit();
+		System.exit(0);
+		
+	}
 	
 
 
